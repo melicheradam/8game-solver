@@ -1,5 +1,8 @@
 # 8game-solver
 
+## TODO
+ - [] translate code to english
+
 Python script to solve the 8 tile game, start state and end state can both be defined. Each game state is represented as a string of numbers like "123456780", where 0 represents the empty tile. It calculates solvability by doing parity check for given input. 
 
 To solve this problem, BFS algorithm is implemented. BFS has O(b<sup>d</sup>) time complexity, where b is branching factor and d is maximal tree depth - which are 3 and 31 in this case. This can be optimized by running 2 separate BFS, one from start state and another from end state. This reduces the time complexity to O(b<sup>d/2</sup>+b<sup>d/2</sup>), but introduces intesection checking to check if the trees have a common element.
