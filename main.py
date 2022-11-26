@@ -3,24 +3,24 @@ import time
 import collections
 
 
-class Bod:
+class Point:
     def __lt__(self, other):
         return self.id < other.id
 
     def __init__(self):
-        self.hore = "x"
-        self.dole = "x"
-        self.vpravo = "x"
-        self.vlavo = "x"
-        self.pole = "x"
+        self.up = "x"
+        self.down = "x"
+        self.right = "x"
+        self.left = "x"
+        self.str_arr = "x"
         self.id = 0
         self.trace = ""
 
 
-def vypispole(x):
-    print(x.pole[0:3])
-    print(x.pole[3:6])
-    print(x.pole[6:9])
+def print_arr(x):
+    print(x.str_arr[0:3])
+    print(x.str_arr[3:6])
+    print(x.str_arr[6:9])
     print()
 
 
@@ -31,162 +31,162 @@ def myreplace(mystr, myinput):
     return mystr
 
 
-def spravsusedov(x):
-    index = x.pole.find("0")
+def make_neighbors(x):
+    index = x.str_arr.find("0")
 
     #ak som v poslednom riadku
     if index > (X * (Y - 1)) - 1:
-        x.dole = "x"
+        x.down = "x"
     else:
-        x.dole = x.pole[index + X]
+        x.down = x.str_arr[index + X]
 
     #ak som v prvom riadku
     if index < X:
-        x.hore = "x"
+        x.up = "x"
     else:
-        x.hore = x.pole[index - X]
+        x.up = x.str_arr[index - X]
 
     #ak som v poslednom stlpci
     if index % X == X - 1:
-        x.vpravo = "x"
+        x.right = "x"
     else:
-        x.vpravo = x.pole[index + 1]
+        x.right = x.str_arr[index + 1]
 
     #ak som v prvom stlpci
     if index % X == 0:
-        x.vlavo = "x"
+        x.left = "x"
     else:
-        x.vlavo = x.pole[index - 1]
+        x.left = x.str_arr[index - 1]
 
 
-def zahraj(temp):
-    vypispole(temp)
+def play(temp):
+    print_arr(temp)
     global finaltrace
 
     if len(finaltrace) == 0:
         return
-    znak = finaltrace[0]
+    sign = finaltrace[0]
     finaltrace = finaltrace[1:]
 
-    spravsusedov(temp)
-    if znak == "↓":
-        temp.pole = myreplace(temp.pole, temp.dole)
-        zahraj(temp)
-    if znak == "↑":
-        temp.pole = myreplace(temp.pole, temp.hore)
-        zahraj(temp)
-    if znak == "→":
-        temp.pole = myreplace(temp.pole, temp.vpravo)
-        zahraj(temp)
-    if znak == "←":
-        temp.pole = myreplace(temp.pole, temp.vlavo)
-        zahraj(temp)
+    make_neighbors(temp)
+    if sign == "↓":
+        temp.str_arr = myreplace(temp.str_arr, temp.down)
+        play(temp)
+    if sign == "↑":
+        temp.str_arr = myreplace(temp.str_arr, temp.up)
+        play(temp)
+    if sign == "→":
+        temp.str_arr = myreplace(temp.str_arr, temp.right)
+        play(temp)
+    if sign == "←":
+        temp.str_arr = myreplace(temp.str_arr, temp.left)
+        play(temp)
 
 
-def pohni(x):
-    spravsusedov(x)
+def move(x):
+    make_neighbors(x)
 
-    predosly = "x"
+    previous = "x"
     if len(x.trace):
-        predosly = x.trace[-1]
+        previous = x.trace[-1]
 
-    # idem dole
-    if x.dole != "x" and predosly != "↑":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.dole)
+    # idem down
+    if x.down != "x" and previous != "↑":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.down)
         child.trace = x.trace + "↓"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(0, child):
-            existujuce.append(child)
+            existing.append(child)
 
     # idem hore
-    if x.hore != "x" and predosly != "↓":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.hore)
+    if x.up != "x" and previous != "↓":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.up)
         child.trace = x.trace + "↑"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(0, child):
-            existujuce.append(child)
+            existing.append(child)
 
     # idem doprava
-    if x.vpravo != "x" and predosly != "←":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.vpravo)
+    if x.right != "x" and previous != "←":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.right)
         child.trace = x.trace + "→"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(0, child):
-            existujuce.append(child)
+            existing.append(child)
 
     # idem do lava
-    if x.vlavo != "x" and predosly != "→":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.vlavo)
+    if x.left != "x" and previous != "→":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.left)
         child.trace = x.trace + "←"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(0, child):
-            existujuce.append(child)
+            existing.append(child)
 
 
-def pohnir(x):
-    spravsusedov(x)
+def move_reverse(x):
+    make_neighbors(x)
 
-    predosly = "x"
+    previous = "x"
     if len(x.trace):
-        predosly = x.trace[-1]
+        previous = x.trace[-1]
 
     # robim pohyby ale zapisujem opacne pohyby lebo idem odzadu
-    if x.dole != "x" and predosly != "↓":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.dole)
+    if x.down != "x" and previous != "↓":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.down)
         child.trace = x.trace + "↑"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(1, child):
-            existujuceR.append(child)
+            existing_reversed.append(child)
 
     # idem hore
-    if x.hore != "x" and predosly != "↑":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.hore)
+    if x.up != "x" and previous != "↑":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.up)
         child.trace = x.trace + "↓"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(1, child):
-            existujuceR.append(child)
+            existing_reversed.append(child)
 
     # idem doprava
-    if x.vpravo != "x" and predosly != "→":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.vpravo)
+    if x.right != "x" and previous != "→":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.right)
         child.trace = x.trace + "←"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(1, child):
-            existujuceR.append(child)
+            existing_reversed.append(child)
 
     # idem do lava
-    if x.vlavo != "x" and predosly != "←":
-        child = Bod()
-        child.pole = myreplace(x.pole, x.vlavo)
+    if x.left != "x" and previous != "←":
+        child = Point()
+        child.str_arr = myreplace(x.str_arr, x.left)
         child.trace = x.trace + "→"
-        child.id = int(child.pole)
+        child.id = int(child.str_arr)
         if not checkexist(1, child):
-            existujuceR.append(child)
+            existing_reversed.append(child)
 
 
 def checkexist(rev, x):
     if rev:
-        for y in existujuceR:
+        for y in existing_reversed:
             if x.id == y.id:
                 return True
         #for y in spracovaneR:
         #    if x.id == y.id:
         #        return True
-        if spracovaneR[x.id] is not None:
+        if processed_reversed[x.id] is not None:
             return True
 
     if not rev:
-        for y in existujuce:
+        for y in existing:
             if x.id == y.id:
                 return True
-        for y in spracovane:
+        for y in processed:
             if x.id == y.id:
                 return True
     return False
@@ -196,9 +196,9 @@ def check():
     global finaltrace
 
     #hashmapa
-    for x in spracovane:
-        if spracovaneR[x.id] is not None:
-            finaltrace = x.trace + spracovaneR[x.id][::-1]
+    for x in processed:
+        if processed_reversed[x.id] is not None:
+            finaltrace = x.trace + processed_reversed[x.id][::-1]
             print(finaltrace)
             return True
 
@@ -230,35 +230,35 @@ def check():
 
 
 def solvable(x):
-    suma = 0
+    sum = 0
     i = 0
     while i < 8:
         j = i + 1
         while j < 9:
-            if int(x.pole[i]) and int(x.pole[j]) and int(x.pole[i]) > int(x.pole[j]):
-                suma += 1
+            if int(x.str_arr[i]) and int(x.str_arr[j]) and int(x.str_arr[i]) > int(x.str_arr[j]):
+                sum += 1
             j += 1
         i += 1
-    return suma % 2
+    return sum % 2
 
 
-def vyries(zac):
+def solve(zac):
     i = 0
-    existujuce.append(zac)
-    existujuceR.append(ciel)
+    existing.append(zac)
+    existing_reversed.append(finish)
     level = 10
     while i < 15000000:
-        x = existujuce[0]
-        xr = existujuceR[0]
-        pohni(x)
-        pohnir(xr)
+        x = existing[0]
+        xr = existing_reversed[0]
+        move(x)
+        move_reverse(xr)
         i += 1
 
         #hashmapa
-        spracovane.append(existujuce.pop(0))
-        tempx = existujuceR.pop(0)
+        processed.append(existing.pop(0))
+        tempx = existing_reversed.pop(0)
         tempid = tempx.id
-        spracovaneR[tempid] = tempx.trace
+        processed_reversed[tempid] = tempx.trace
 
         """
         #nezoradene polia
@@ -281,30 +281,30 @@ def vyries(zac):
 X = 3
 Y = 3
 
-existujuce = []
-spracovane = []
+existing = []
+processed = []
 
-existujuceR = []
+existing_reversed = []
 #spracovaneR = []
-spracovaneR = collections.defaultdict(lambda: None, {})
+processed_reversed = collections.defaultdict(lambda: None, {})
 
-zaciatok = Bod()
-zaciatok.pole = "123405678"
-zaciatok.id = int(zaciatok.pole)
+beginning = Point()
+beginning.str_arr = "123405678"
+beginning.id = int(beginning.str_arr)
 
-ciel = Bod()
-ciel.pole = "087654321"
-ciel.id = int(ciel.pole)
+finish = Point()
+finish.str_arr = "087654321"
+finish.id = int(finish.str_arr)
 
 global finaltrace
 
-if solvable(zaciatok) == solvable(ciel):
+if solvable(beginning) == solvable(finish):
     start = time.time()
-    vyries(zaciatok)
-    dlzka = len(finaltrace)
-    zahraj(zaciatok)
+    solve(beginning)
+    length = len(finaltrace)
+    play(beginning)
     end = time.time()
     print("Trvanie: " + str(round(end - start, 2)) + "s")
-    print(str(dlzka) + " tahov")
+    print(str(length) + " tahov")
 else:
     print("Hra nieje riesitelna")
